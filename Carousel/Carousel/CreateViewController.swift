@@ -1,47 +1,45 @@
 //
-//  SigninViewController.swift
+//  CreateViewController.swift
 //  Carousel
 //
-//  Created by viramesh on 2/12/15.
+//  Created by viramesh on 2/15/15.
 //  Copyright (c) 2015 vbits. All rights reserved.
 //
 
 import UIKit
 
-class SigninViewController: UIViewController {
+class CreateViewController: UIViewController {
 
+    @IBOutlet weak var createFormGroup: UIView!
+    @IBOutlet weak var createBtnGroup: UIView!
     
-    @IBOutlet weak var loginFormGroup: UIView!
-    @IBOutlet weak var signinBtnGroup: UIView!
+    var createFormGroupOffset: CGFloat! = 80
+    var createFormGroupY: CGFloat!
+    var createBtnGroupOffset: CGFloat! = 230
+    var createBtnGroupY: CGFloat!
     
-    var loginFormOffset: CGFloat! = 80
-    var loginFormGroupY: CGFloat!
-    var signinBtnOffset: CGFloat! = 230
-    var signinBtnGroupY: CGFloat!
+    @IBOutlet weak var formName: UITextField!
+    @IBOutlet weak var formEmail: UITextField!
+    @IBOutlet weak var formPassword: UITextField!
+    @IBOutlet weak var termsSwitch: UISwitch!
     
-    @IBOutlet weak var loginEmail: UITextField!
-    @IBOutlet weak var loginPassword: UITextField!
-    
-    var invalidEmail: UIAlertView!
-    var invalidPassword: UIAlertView!
-    var invalidLogin: UIAlertView!
-    var loginDelay: UIAlertView!
+    var invalidFormEntry: UIAlertView!
+    var termsNotAccepted: UIAlertView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
-
-        loginFormGroupY = loginFormGroup.center.y
-        signinBtnGroupY = signinBtnGroup.center.y
         
+        createFormGroupY = createFormGroup.center.y
+        createBtnGroupY = createBtnGroup.center.y
         
-        invalidEmail = UIAlertView(title: "Email Required", message: "Please enter your email address", delegate: self, cancelButtonTitle: "OK")
-        invalidPassword = UIAlertView(title: "Password Required", message: "Please enter your password", delegate: self, cancelButtonTitle: "OK")
-        invalidLogin = UIAlertView(title: "Incorrect Email/Password", message: "Please check your email and password and try again", delegate: self, cancelButtonTitle: "OK")
-        loginDelay = UIAlertView(title: "Signing in...", message: nil, delegate: self, cancelButtonTitle: nil)
+        termsSwitch.on = false
+        
+        invalidFormEntry = UIAlertView(title: "All Fields Required", message: "Please fill out all fields to create an account", delegate: self, cancelButtonTitle: "OK")
+        termsNotAccepted = UIAlertView(title: "Agree to terms", message: "You must agree to terms to create an account", delegate: self, cancelButtonTitle: "OK")
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,17 +47,8 @@ class SigninViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func backButtonDidPress(sender: AnyObject) {
+    @IBAction func backBtnDidPress(sender: AnyObject) {
         self.navigationController?.popViewControllerAnimated(true)
-    }
-    
-    func delay(delay:Double, closure:()->()) {
-        dispatch_after(
-            dispatch_time(
-                DISPATCH_TIME_NOW,
-                Int64(delay * Double(NSEC_PER_SEC))
-            ),
-            dispatch_get_main_queue(), closure)
     }
     
     func keyboardWillShow(notification: NSNotification!) {
@@ -74,9 +63,9 @@ class SigninViewController: UIViewController {
         var animationCurve = curveValue.integerValue
         
         UIView.animateWithDuration(animationDuration, delay: 0.0, options: UIViewAnimationOptions(UInt(animationCurve << 16)), animations: {
-            self.loginFormGroup.center.y = self.loginFormGroupY - self.loginFormOffset
-            self.signinBtnGroup.center.y = self.signinBtnGroupY - self.signinBtnOffset
-
+            self.createFormGroup.center.y = self.createFormGroupY - self.createFormGroupOffset
+            self.createBtnGroup.center.y = self.createBtnGroupY - self.createBtnGroupOffset
+            
             }, completion: nil)
     }
     
@@ -92,39 +81,25 @@ class SigninViewController: UIViewController {
         var animationCurve = curveValue.integerValue
         
         UIView.animateWithDuration(animationDuration, delay: 0.0, options: UIViewAnimationOptions(UInt(animationCurve << 16)), animations: {
-            self.loginFormGroup.center.y = self.loginFormGroupY
-            self.signinBtnGroup.center.y = self.signinBtnGroupY
+            self.createFormGroup.center.y = self.createFormGroupY
+            self.createBtnGroup.center.y = self.createBtnGroupY
             
             }, completion: nil)
     }
-    
-    func checkPassword() {
-        loginDelay.dismissWithClickedButtonIndex(0, animated: true)
-        if(loginPassword.text != "password") {
-            invalidLogin.show()
+
+    @IBAction func createBtnDidPress(sender: AnyObject) {
+        
+        if(formName.text.isEmpty || formEmail.text.isEmpty || formPassword.text.isEmpty) {
+            invalidFormEntry.show()
+        }
+        else if(!termsSwitch.on) {
+            termsNotAccepted.show()
         }
         else {
-            // perform segue into next section
-            performSegueWithIdentifier("welcomeSegue", sender: self)
+            performSegueWithIdentifier("createAccountSegue", sender: self)
         }
     }
-    
-    @IBAction func signinButtonDidPress(sender: AnyObject) {
-        if(loginEmail.text.isEmpty) {
-            invalidEmail.show();
-        }
-        else if(loginPassword.text.isEmpty) {
-            invalidPassword.show()
-        }
-        else {
-            loginDelay.show()
-            delay(2) {
-                self.checkPassword()
-            }
-        }
-    }
-    
-    
+
     /*
     // MARK: - Navigation
 

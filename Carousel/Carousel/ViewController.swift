@@ -21,7 +21,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var imageTile6: UIImageView!
     
     var yOffsets : [Float] = [-265, -240, -415, -408, -500, -500]
-    var xOffsets : [Float] = [-70, 35, 20, 70, -120, -95]
+    var xOffsets : [Float] = [-70, 35, 20, 70, -120, -85]
     var scales : [Float] = [1, 1.65, 1.7, 1.6, 1.65, 1.65]
     var rotations: [Float] = [-10, -10, 10, 10, 10, -10]
     var imageTiles: [UIImageView] = []
